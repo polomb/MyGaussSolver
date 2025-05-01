@@ -4,8 +4,6 @@
 #include <iostream>
 #include <cmath>
 
-#define UVELICHCONST 1.5
-
 class Vector
 {
 private:
@@ -37,7 +35,14 @@ public:
         for (unsigned int i = 0; i < sizeVec; i++)
             data[i] = 0.0;
     }
-	// RULE OF THREE methods
+    void print() const
+    {
+        for (int i = 0; i < sizeVec; i++)
+        {
+            std::cout << data[i] << " ";
+        }
+        std::cout << std::endl;
+    }
     //RULE OF THREE
     Vector(const Vector& copy)
     {
@@ -60,18 +65,6 @@ public:
     ~Vector()
     {
         delete[] data;
-    }
-    //
-    bool empty() const
-    {
-        if (sizeVec == 0)
-            return true;
-        else
-            return false;
-    }
-    unsigned int size() const
-    {
-        return sizeVec;
     }
 };
 
