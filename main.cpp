@@ -1,19 +1,48 @@
 #include "GaussSolver.h"
 
 #define CONST_N 3
+#define CONST_M 2
 
 void main() 
 {
-	Matrix a(CONST_N, CONST_N);
-	Vector b(CONST_N);
+	Matrix a(3, 2);
+	Vector b(3);
+	GaussSolver sol;
+	a.resize(3, 2);
+	b.resize(3);
+	a(0, 0) = 1; a(0, 1) = 1; //a(0, 2) = 1;
+	a(1, 0) = 0; a(1, 1) = 1; //a(1, 2) = -1;
+	a(2, 0) = 0; a(2, 1) = 1; //a(2, 2) = 1;
+	b[0] = 3; b[1] = 1; b[2] = 0;
+	sol.solve(a, b); //
+	//
+	a.resize(3, 2);
+	b.resize(3);
+	a(0, 0) = 1; a(0, 1) = 1; 
+	a(1, 0) = 0; a(1, 1) = 1; 
+	a(2, 0) = 0; a(2, 1) = 0; 
+	b[0] = 3; b[1] = 1; b[2] = 0;
+	sol.solve(a, b); //2, 1
+	//
+	a.resize(2, 3);
+	b.resize(2);
+	a(0, 0) = 1; a(0, 1) = 2; a(0, 2) = 1;
+	a(1, 0) = 3; a(1, 1) = 1; a(1, 2) = -1;
+	b[0] = 1; b[1] = 1;
+	sol.solve(a, b); //1/5, 2/5, 0
+	//
+	a.resize(3, 3);
+	b.resize(3);
 	a(0, 0) = 2; a(0, 1) = 4; a(0, 2) = 1;
 	a(1, 0) = 5; a(1, 1) = 2; a(1, 2) = 1;
 	a(2, 0) = 2; a(2, 1) = 3; a(2, 2) = 4;
 	b[0] = 36; b[1] = 47; b[2] = 37;
-	//a(0, 0) = 2; a(0, 1) = 4; a(0, 2) = 1;
-	//a(1, 0) = 5; a(1, 1) = 2; a(1, 2) = 1;
-	//a(2, 0) = 2; a(2, 1) = 3; a(2, 2) = 4;
-	//b[0] = 36; b[1] = 47; b[2] = 37;
-	GaussSolver sol;
-	sol.solve(a, b);
+	sol.solve(a, b); //7, 5, 2
+	a.resize(3, 3);
+	b.resize(3);
+	a(0, 0) = 1; a(0, 1) = 1; a(0, 2) = 0;
+	a(1, 0) = 0; a(1, 1) = 1; a(1, 2) = 0;
+	a(2, 0) = 0; a(2, 1) = 0; a(2, 2) = 0;
+	b[0] = 3; b[1] = 1; b[2] = 0;
+	sol.solve(a, b); //7, 5, 2
 }

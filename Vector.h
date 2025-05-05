@@ -8,7 +8,7 @@ class Vector
 {
 private:
     double* data = nullptr;
-    unsigned int sizeVec = 0;
+    int sizeVec = 0;
 public:
 	//Эти не менять
 	Vector(){}
@@ -16,7 +16,7 @@ public:
 	{
         sizeVec = n;
         data = new double[sizeVec];
-        for (unsigned int i = 0; i < sizeVec; i++)
+        for (int i = 0; i < sizeVec; i++)
             data[i] = 0.0;
 	}
     double& operator[](int index)
@@ -32,7 +32,7 @@ public:
     {
         sizeVec = n;
         data = new double[sizeVec];
-        for (unsigned int i = 0; i < sizeVec; i++)
+        for (int i = 0; i < sizeVec; i++)
             data[i] = 0.0;
     }
     void print() const
@@ -43,12 +43,39 @@ public:
         }
         std::cout << std::endl;
     }
+    void clear()
+    {
+        delete[] data;
+        data = nullptr;
+        sizeVec = 0;
+    }
+    void resize(int count)
+    {
+        if (count == 0) { this->clear(); }
+        else if (count == sizeVec) {}
+        else
+        {
+            double* dop = new double[count];
+            int min = std::min(sizeVec, count);
+            for (int i = 0; i < min; i++)
+            {
+                dop[i] = data[i];
+            }
+            delete[] data;
+            sizeVec = count;
+            data = dop;
+            for (int i = min; i < sizeVec; i++)
+            {
+                data[i] = 0.0;
+            }
+        }
+    }
     //RULE OF THREE
     Vector(const Vector& copy)
     {
         sizeVec = copy.sizeVec;
         data = new double[sizeVec];
-        for (unsigned int i = 0; i < sizeVec; i++)
+        for (int i = 0; i < sizeVec; i++)
             data[i] = copy.data[i];
     }
     Vector& operator=(const Vector& v)
@@ -57,7 +84,7 @@ public:
             delete[] data;
             sizeVec = v.sizeVec;
             data = new double[sizeVec];
-            for (unsigned int i = 0; i < sizeVec; i++)
+            for (int i = 0; i < sizeVec; i++)
                 data[i] = v.data[i];
         }
         return *this;
