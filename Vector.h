@@ -70,6 +70,17 @@ public:
             }
         }
     }
+    void SortOfResize(int count)
+    {
+        if (count == 0) { this->clear(); }
+        else if (count == sizeVec) {}
+        else
+        {
+            delete[] data;
+            sizeVec = count;
+            data = new double[count];
+        }
+    }
     //RULE OF THREE
     Vector(const Vector& copy)
     {
@@ -92,6 +103,20 @@ public:
     ~Vector()
     {
         delete[] data;
+    }
+    void insert(int pos, double dou)
+    {
+        if (pos <= sizeVec)
+        {
+            this->resize(sizeVec+1);
+            for (int i = sizeVec - 1; i > pos; i--)
+                data[i] = data[i - 1];
+            data[pos] = dou;
+        }
+        else
+        {
+            std::cout << "Error#Insert: Out-of-bounds" << "\n";
+        }
     }
 };
 

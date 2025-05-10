@@ -39,7 +39,6 @@ public:
 	int getY() { return y; }
 	void swapLine(int y1, int y2, int h = 0)
 	{
-		int x = this->getX();
 		Vector temp(x);
 		for (int j = 0; j < x; j++)
 		{
@@ -54,9 +53,8 @@ public:
 			matrix[y2 * x + j] = temp[j];
 		}
 	}
-	void swapRow(int x1, int x2, int h = 0)
+	void swapColumn(int x1, int x2, int h = 0)
 	{
-		int y = this->getY();
 		Vector temp(x);
 		for (int i = 0; i < y; i++)
 		{
@@ -71,6 +69,26 @@ public:
 			matrix[i * x + x2] = temp[i];
 		}
 	}
+	void DestroyColumn(int xx)
+	{
+		this->x -= 1;
+		Vector dop = matrix;
+		matrix.resize(y * x);
+		for (int j = 0; j < x; j++)
+		{
+			for (int i = 0; i < y; i++)
+			{
+				if (j < xx)
+				{
+					matrix[i * x + j] = dop[i * (x+1) + j];
+				}
+				else if (j > xx)
+				{
+					matrix[i * x + j] = dop[i * (x+2) + j];
+				}
+			}
+		}
+	}
 	bool IsLineEqualsZero(int i)
 	{
 		int x = this->getX();
@@ -81,9 +99,8 @@ public:
 		}
 		return true;
 	}
-	bool IsRowEqualsZero(int j)
+	bool IsColumnEqualsZero(int j)
 	{
-		int x = this->getX();
 		for (int i = 0; i < x; i++)
 		{
 			if (matrix[i * x + j] > EPS)
@@ -110,27 +127,6 @@ public:
 		y = i;
 		x = j;
 		matrix.resize(x*y);
-	}
-	void resizeXY(int i, int j)
-	{
-		Vector dop(i*j);
-		for (int yy = 0; yy < i; yy++)
-		{
-			for (int xx = 0; xx < j; xx++)
-			{
-				dop[yy*j+xx] = matrix[yy * x + xx];
-			}
-		}
-		matrix.resize(x * y);
-		for (int yy = 0; yy < i; yy++)
-		{
-			for (int xx = 0; xx < j; xx++)
-			{
-				matrix[yy * j + xx] = dop[yy * j + xx];
-			}
-		}
-		y = i;
-		x = j;
 	}
 };
 

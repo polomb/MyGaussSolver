@@ -17,11 +17,17 @@ public:
 		int x = matrix.getX();
 		Vector vector = v;
 		int YMinusX = 0;
-		while (matrix.IsRowEqualsZero(x - 1))
+		int ColumnsDeleted = 0;
+		std::vector<int> pizza;
+		for (int i = 0; i < x; i++)
 		{
-			x -= 1;
-			matrix.resizeXY(y, x);
-			vector.resize(y);
+			if (matrix.IsColumnEqualsZero(i))
+			{
+				x -= 1;
+				ColumnsDeleted += 1;
+				matrix.DestroyColumn(i);
+				pizza.push_back(i);
+			}
 		}
 		if (x > y)
 		{
@@ -39,27 +45,27 @@ public:
 
 		int h = 0;
 		int index;
-		double maxRow;
+		double maxColumn;
 		for (h = 0; h < y; h++)
 		{
 			//Находим наибольшую строку
 			index = h;
-			maxRow = abs(matrix(h,h));
+			maxColumn = abs(matrix(h,h));
 			for (int i = h; i < y; i++)
 			{
-				if (maxRow < abs(matrix(i, h)))
+				if (maxColumn < abs(matrix(i, h)))
 				{
 					index = i;
-					maxRow = abs(matrix(i, h));
+					maxColumn = abs(matrix(i, h));
 				}
 			}
 			//Берём наибольшую строку
 			if (h != index)
 			{
 				matrix.swapLine(h, index, h);
-				maxRow = vector[h];
+				maxColumn = vector[h];
 				vector[h] = vector[index];
-				vector[index] = maxRow;
+				vector[index] = maxColumn;
 			}
 			//Приводим к треугольному виду
 			for (int i = h; i < y; i++)
@@ -85,6 +91,11 @@ public:
 		{
 			if (matrix.IsLineEqualsZero(h))
 			{
+				if (vector[h] >= EPS)
+				{
+					otvet.push_back(KOtvetu);
+					return otvet;
+				}
 				count += 1;
 			}
 			else
@@ -122,6 +133,10 @@ public:
 			}
 			YMinusX -= 1;
 		}
+		for (int P = ColumnsDeleted; P > 0; P--)
+		{
+			KOtvetu.insert(pizza[P-1], 0.0);
+		}
 		//
 		KOtvetu.print();
 		otvet.push_back(KOtvetu);
@@ -144,7 +159,10 @@ public:
 				for (int i = 0; i < g; i++)
 					dopOtvet[i] = dopOtvet[i] - matrix(i, g) * dopOtvet[g];
 			}
-
+			for (int P = ColumnsDeleted; P > 0; P--)
+			{
+				DopVect.insert(pizza[P-1], 0.0);
+			}
 			DopVect[y - h] = 1;
 			//DopVect.print();
 			otvet.push_back(DopVect);
