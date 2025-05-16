@@ -1,170 +1,165 @@
-#ifndef _GAUSS_SOLVER_
+п»ї#ifndef _GAUSS_SOLVER_
 #define _GAUSS_SOLVER_
 
 #include <vector>
 
 #include "Matrix.h"
 
+#define EPS 1e-15
+
 class GaussSolver
 {
 public:
-	GaussSolver(){}
+	GaussSolver() {}
 	std::vector<Vector> solve(const Matrix& m, const Vector& v)
 	{
-		//Возвращается std::vector<Vector> 1,0,{V0, V1, ... , Vk}, V0 - вектор сдвига
 		Matrix matrix = m;
 		int y = matrix.getY();
 		int x = matrix.getX();
 		Vector vector = v;
-		int YMinusX = 0;
-		int ColumnsDeleted = 0;
-		std::vector<int> pizza;
+		Vector KMeshaniu(x);
+		std::vector<Vector> otvet;
 		for (int i = 0; i < x; i++)
 		{
-			if (matrix.IsColumnEqualsZero(i))
+			KMeshaniu[i] = i;
+		}
+		int h = 0;
+		int index;
+		double maxLine;
+		for (h = 0; h < y; h++)
+		{
+			index = h;
+			int maxColumn = 0;
+			for (int i = h; i < x; i++)
 			{
-				x -= 1;
-				ColumnsDeleted += 1;
-				matrix.DestroyColumn(i);
-				pizza.push_back(i);
+				if ((matrix.IsPartColumnEqualsZero(h, h)))
+				{
+					if (h != i)
+					{
+						matrix.swapColumn(h, i);
+						double lll = KMeshaniu[h];
+						KMeshaniu[h] = KMeshaniu[i];
+						KMeshaniu[i] = lll;
+					}
+					maxColumn += 1;
+				}
+			}
+			if (maxColumn == x - h)
+				break;
+			if (h != index)
+			{
+				matrix.swapLine(h, index, h);
+				maxLine = vector[h];
+				vector[h] = vector[index];
+				vector[index] = maxLine;
+			}
+			//
+			index = h;
+			maxLine = abs(matrix(h, h));
+			for (int i = h; i < y; i++)
+			{
+				if (maxLine < abs(matrix(i, h)))
+				{
+					index = i;
+					maxLine = abs(matrix(i, h));
+				}
+			}
+			//
+			if (h != index)
+			{
+				matrix.swapLine(h, index, h);
+				maxLine = vector[h];
+				vector[h] = vector[index];
+				vector[index] = maxLine;
+			}
+			//
+			for (int i = h; i < std::min(x,y); i++)
+			{
+				double temp = matrix(i, h);
+				if (abs(temp) < EPS) continue;
+				for (int j = h; j < x; j++)
+					matrix(i, j) = matrix(i, j) / temp;
+				vector[i] = vector[i] / temp;
+				if (i == h)  continue;
+				for (int j = 0; j < x; j++)
+					matrix(i, j) = matrix(i, j) - matrix(h, j);
+				vector[i] = vector[i] - vector[h];
 			}
 		}
+		int NullCollums = 0;
+		for (int j = 0; j < x; j++)
+		{
+			if (matrix.IsColumnEqualsZero(j - NullCollums))
+			{
+				matrix.DestroyColumn(j - NullCollums);
+				//
+				double lll = 0;
+				for (int l = j - NullCollums; l < KMeshaniu.getSize()-1; l++)
+				{
+					lll = KMeshaniu[l];
+					KMeshaniu[l] = KMeshaniu[l+1];
+					KMeshaniu[l+1] = lll;
+				}
+				//
+				NullCollums += 1;
+			}
+		}
+		x -= NullCollums;
+		int XMinusY = 0;
+		int YMinusX = 0;
 		if (x > y)
 		{
-			y = x;
-			matrix.resize(y, x);
-			vector.resize(y);
+			XMinusY = x - y;
+			x = y;
 		}
 		else if (y > x)
 		{
 			YMinusX = y - x;
 			y = x;
 		}
-		Vector KOtvetu(y);
-		std::vector<Vector> otvet;
-
-		int h = 0;
-		int index;
-		double maxColumn;
-		for (h = 0; h < y; h++)
+		int NullLines = 0;
+		for (int i = 0; i < y; i++)
 		{
-			//Находим наибольшую строку
-			index = h;
-			maxColumn = abs(matrix(h,h));
-			for (int i = h; i < y; i++)
+			if (matrix.IsLineEqualsZero(i))
 			{
-				if (maxColumn < abs(matrix(i, h)))
-				{
-					index = i;
-					maxColumn = abs(matrix(i, h));
-				}
-			}
-			//Берём наибольшую строку
-			if (h != index)
-			{
-				matrix.swapLine(h, index, h);
-				maxColumn = vector[h];
-				vector[h] = vector[index];
-				vector[index] = maxColumn;
-			}
-			//Приводим к треугольному виду
-			for (int i = h; i < y; i++)
-			{
-				double temp = matrix(i,h);
-				if (abs(temp) < EPS) continue;
-				for (int j = h; j < x; j++)
-				{
-					matrix(i, j) = matrix(i, j) / temp;
-				}
-				vector[i] = vector[i] / temp;
-				if (i == h)  continue;
-				for (int j = 0; j < x; j++)
-				{
-					matrix(i, j) = matrix(i, j) - matrix(h, j);
-				}
-				vector[i] = vector[i] - vector[h];
+				NullLines += 1;
 			}
 		}
-		//Адэкватирование ответа
-		int count = 0;
-		for (h = y - 1; h >= 0; h--)
+		Vector KOtvetu(x + NullCollums + XMinusY);
+		//РћР±СЂР°С‚РЅС‹Р№ С…РѕРґ
+		for (h = std::min((x - 1), (y - 1)); h >= 0; h--)
 		{
-			if (matrix.IsLineEqualsZero(h))
-			{
-				if (vector[h] >= EPS)
-				{
-					otvet.push_back(KOtvetu);
-					return otvet;
-				}
-				count += 1;
-			}
-			else
-			{
-				break;
-			}
-		}
-		while (y > x && count > 0)
-		{
-			y -= 1;
-			count -= 1;
-		}
-		//Обратный ход
-		for (h = y - 1; h > y - 1 - count; h--)
-		{
-			KOtvetu[h] = vector[h];
-		}
-		for (h = y - 1 - count; h >= 0; h--)
-		{
-			KOtvetu[h] = vector[h];
+			KOtvetu[KMeshaniu[h]] = vector[KMeshaniu[h]];
 			for (int i = 0; i < h; i++)
-				vector[i] = vector[i] - matrix(i, h) * vector[h];
+				vector[KMeshaniu[i]] = vector[KMeshaniu[i]] - matrix(i, h) * vector[KMeshaniu[h]];
 		}
-		//
-		while (YMinusX > 0)
+		while (YMinusX > -NullLines)
 		{
 			double res = 0;
 			for (int i = 0; i < x; i++)
 			{
-				res += matrix(y + YMinusX - 1, i) * KOtvetu[i];
+				res += matrix(y + YMinusX - NullLines - 1, i) * KOtvetu[i];
 			}
-			if ((res - vector[y + YMinusX - 1]) > EPS)
+			if ((res - vector[y + YMinusX - NullLines - 1]) > EPS)
 			{
 				return otvet;
 			}
 			YMinusX -= 1;
 		}
-		for (int P = ColumnsDeleted; P > 0; P--)
-		{
-			KOtvetu.insert(pizza[P-1], 0.0);
-		}
-		//
 		KOtvetu.print();
 		otvet.push_back(KOtvetu);
-		//Доп Вектора
-		for (h = count; h > 0; h--)
+		for (int k = XMinusY; k > 0; k--)
 		{
-			Vector DopVect(y);
-			Vector dopOtvet(y);
-			for (int i = 0; i < y; i++)
+			Vector DopVect(x + NullCollums + XMinusY);
+			//РћР±СЂР°С‚РЅС‹Р№ С…РѕРґ
+			for (int l = std::min((x - 1), (y - 1)); l >= 0; l--)
 			{
-				dopOtvet[i] = matrix(i, x - h);
+				DopVect[KMeshaniu[l]] = matrix(KMeshaniu[l], x + XMinusY - k);
+				for (int i = 0; i < l; i++)
+					matrix(KMeshaniu[i], x + XMinusY - k) = matrix(KMeshaniu[i], x + XMinusY - k) - matrix(i, l) * matrix(KMeshaniu[l], x + XMinusY - k);
 			}
-			for (int g = y - 1; g > y - 1 - count; g--)
-			{
-				DopVect[g] = dopOtvet[g];
-			}
-			for (int g = y - 1 - count; g >= 0; g--)
-			{
-				DopVect[g] = dopOtvet[g];
-				for (int i = 0; i < g; i++)
-					dopOtvet[i] = dopOtvet[i] - matrix(i, g) * dopOtvet[g];
-			}
-			for (int P = ColumnsDeleted; P > 0; P--)
-			{
-				DopVect.insert(pizza[P-1], 0.0);
-			}
-			DopVect[y - h] = 1;
-			//DopVect.print();
+			DopVect[KMeshaniu[x + XMinusY - k]] = 1;
+			DopVect.print();
 			otvet.push_back(DopVect);
 		}
 		return otvet;
@@ -172,4 +167,3 @@ public:
 };
 
 #endif
-

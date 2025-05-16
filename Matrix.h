@@ -19,24 +19,18 @@ public:
 	}
 	double& operator()(int i, int j)
 	{
-		//ПОТОМ УДАЛИТЬ
-		if (i >= y || j >= x)
-			std::cout << "Error: MatrixOperator()";
-		//ПОТОМ УДАЛИТЬ
 		//Вернуть A[i,j]
 		return matrix[i * x + j];
 	}
 	double operator()(int i, int j) const
 	{
-		//ПОТОМ УДАЛИТЬ
-		if (i >= y || j >= x)
-			std::cout << "Error: MatrixOperator()";
-		//ПОТОМ УДАЛИТЬ
 		//Вернуть A[i,j]
 		return matrix[i * x + j];
 	}
 	int getX() { return x; }
 	int getY() { return y; }
+	void setX(int xx){ this->x = xx; }
+	void setY(int yy) { this->y = yy; }
 	void swapLine(int y1, int y2, int h = 0)
 	{
 		Vector temp(x);
@@ -82,16 +76,15 @@ public:
 				{
 					matrix[i * x + j] = dop[i * (x+1) + j];
 				}
-				else if (j > xx)
+				else
 				{
-					matrix[i * x + j] = dop[i * (x+2) + j];
+					matrix[i * x + j] = dop[i * (x+1) + j + 1];
 				}
 			}
 		}
 	}
 	bool IsLineEqualsZero(int i)
 	{
-		int x = this->getX();
 		for (int j = 0; j < x; j++)
 		{
 			if (matrix[i * x + j] > EPS)
@@ -101,7 +94,16 @@ public:
 	}
 	bool IsColumnEqualsZero(int j)
 	{
-		for (int i = 0; i < x; i++)
+		for (int i = 0; i < y; i++)
+		{
+			if (matrix[i * x + j] > EPS)
+				return false;
+		}
+		return true;
+	}
+	bool IsPartColumnEqualsZero(int j, int nachalo)
+	{
+		for (int i = nachalo; i < y; i++)
 		{
 			if (matrix[i * x + j] > EPS)
 				return false;

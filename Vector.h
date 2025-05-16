@@ -21,10 +21,14 @@ public:
 	}
     double& operator[](int index)
     {
+        if(index >= sizeVec)
+            std::cout << "Vector[]\n";
         return data[index];
     }
     double operator[](int index) const
     {
+        if (index >= sizeVec)
+            std::cout << "Vector[]\n";
         return data[index];
     }
 	//Эти не менять
@@ -80,6 +84,10 @@ public:
             sizeVec = count;
             data = new double[count];
         }
+    }
+    int getSize()
+    {
+        return sizeVec;
     }
     //RULE OF THREE
     Vector(const Vector& copy)
