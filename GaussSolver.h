@@ -105,6 +105,15 @@ public:
 			}
 		}
 		x -= NullCollums;
+		int NullLines = 0;
+		for (int i = 0; i < y; i++)
+		{
+			if (matrix.IsLineEqualsZero(i))
+			{
+				NullLines += 1;
+			}
+		}
+		y -= NullLines;
 		int XMinusY = 0;
 		int YMinusX = 0;
 		if (x > y)
@@ -116,14 +125,6 @@ public:
 		{
 			YMinusX = y - x;
 			y = x;
-		}
-		int NullLines = 0;
-		for (int i = 0; i < y; i++)
-		{
-			if (matrix.IsLineEqualsZero(i))
-			{
-				NullLines += 1;
-			}
 		}
 		Vector KOtvetu(x + NullCollums + XMinusY);
 		//Обратный ход
@@ -138,15 +139,15 @@ public:
 			double res = 0;
 			for (int i = 0; i < x; i++)
 			{
-				res += matrix(y + YMinusX - NullLines - 1, i) * KOtvetu[i];
+				res += matrix(y + YMinusX + NullLines - 1, i) * vector[KMeshaniu[i]];
 			}
-			if ((res - vector[y + YMinusX - NullLines - 1]) > EPS)
+			if (std::abs((res - vector[(y + YMinusX + NullLines - 1)])) > EPS)
 			{
 				return otvet;
 			}
 			YMinusX -= 1;
 		}
-		KOtvetu.print();
+		//KOtvetu.print();
 		otvet.push_back(KOtvetu);
 		for (int k = XMinusY; k > 0; k--)
 		{
@@ -159,7 +160,14 @@ public:
 					matrix(KMeshaniu[i], x + XMinusY - k) = matrix(KMeshaniu[i], x + XMinusY - k) - matrix(i, l) * matrix(KMeshaniu[l], x + XMinusY - k);
 			}
 			DopVect[KMeshaniu[x + XMinusY - k]] = 1;
-			DopVect.print();
+			//DopVect.print();
+			otvet.push_back(DopVect);
+		}
+		for (int k = NullCollums; k > 0; k--)
+		{
+			Vector DopVect(x + NullCollums + XMinusY);
+			DopVect[KMeshaniu[x + XMinusY + NullCollums - k]] = 1;
+			//DopVect.print();
 			otvet.push_back(DopVect);
 		}
 		return otvet;

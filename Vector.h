@@ -21,14 +21,14 @@ public:
 	}
     double& operator[](int index)
     {
-        if(index >= sizeVec)
-            std::cout << "Vector[]\n";
+        //if(index >= sizeVec)
+        //    std::cout << "Vector[]\n";
         return data[index];
     }
     double operator[](int index) const
     {
-        if (index >= sizeVec)
-            std::cout << "Vector[]\n";
+        //if (index >= sizeVec)
+        //    std::cout << "Vector[]\n";
         return data[index];
     }
 	//Эти не менять
